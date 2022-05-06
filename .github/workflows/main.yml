@@ -24,23 +24,6 @@ jobs:
       with:
         fetch-depth: 0
 
-    - name: Setup Postgres
-      run: |
-        mkdir pgdata
-        chown postgres pgdata
-        sudo -u postgres initdb -D pgdata
-        sudo -u postgres pg_ctl -D pgdata start
-        sleep 5
-        sudo -u postgres createuser root -s
-        createdb
-        psql -c "SELECT 42"
-
-    - name: Install even more
-      run: |
-        curl -O https://bootstrap.pypa.io/pip/3.6/get-pip.py
-        python3 get-pip.py --user
-        python3 -m pip install awscli cmake --upgrade --user
-
     - name: Update DuckDB submodule
       run: |
         git submodule init
@@ -50,15 +33,3 @@ jobs:
       run: |
         export PATH=/github/home/.local/bin:$PATH
         make release
-
-    - name: Make test databases
-      run: |
-        psql -c "SELECT 43"
-        source ./create-postgres-tables.sh
-        ./duckdb/build/release/test/unittest --test-dir . "[postgres_scanner]"
-
-    - uses: actions/upload-artifact@v2
-      with:
-        name: postgres-scanner
-        path: |
-          build/release/postgres_scanner.duckdb_extension
