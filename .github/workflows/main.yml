@@ -1,0 +1,64 @@
+on: [push, pull_request]
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  build:
+    name: CentOS 7
+    runs-on: ubuntu-latest
+    container: centos:7
+
+    steps:
+    - name: Install
+      run: |
+        yum install -y gcc gcc-c++ make python3 postgresql-server sudo
+
+    - name: Install recent git yay
+      run: |
+        yum -y install https://packages.endpointdev.com/rhel/7/os/x86_64/endpoint-repo.x86_64.rpm
+        yum install -y git
+
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+
+    - name: Setup Postgres
+      run: |
+        mkdir pgdata
+        chown postgres pgdata
+        sudo -u postgres initdb -D pgdata
+        sudo -u postgres pg_ctl -D pgdata start
+        sleep 5
+        sudo -u postgres createuser root -s
+        createdb
+        psql -c "SELECT 42"
+
+    - name: Install even more
+      run: |
+        curl -O https://bootstrap.pypa.io/pip/3.6/get-pip.py
+        python3 get-pip.py --user
+        python3 -m pip install awscli cmake --upgrade --user
+
+    - name: Update DuckDB submodule
+      run: |
+        git submodule init
+        git submodule update --remote --merge
+
+    - name: Build
+      run: |
+        export PATH=/github/home/.local/bin:$PATH
+        make release
+
+    - name: Make test databases
+      run: |
+        psql -c "SELECT 43"
+        source ./create-postgres-tables.sh
+        ./duckdb/build/release/test/unittest --test-dir . "[postgres_scanner]"
+
+    - uses: actions/upload-artifact@v2
+      with:
+        name: postgres-scanner
+        path: |
+          build/release/postgres_scanner.duckdb_extension
