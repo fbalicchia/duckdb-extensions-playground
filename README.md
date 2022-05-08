@@ -21,13 +21,13 @@ To run, run the bundled `duckdb` shell:
  ./duckdb/build/release/duckdb 
 ```
 
-Then, load the Postgres extension like so:
+Then, load the simple extension like so:
 ```SQL
 LOAD 'build/release/first_extensions.duckdb_extension';
 ```
 
 ```SQL
- select hello('World from Italy');
+select hello('World from Italy');
 ```
 
 
