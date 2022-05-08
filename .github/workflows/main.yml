@@ -26,6 +26,7 @@ jobs:
 
     - name: Update DuckDB submodule
       run: |
+        git config --global --add safe.directory /__w/duckdb-extensions-playground/duckdb-extensions-playground
         git submodule update --init --recursive 
         
     - name: Build
