@@ -41,6 +41,39 @@ endif()
 
 find_package(Threads REQUIRED)
 
+set(H3_SOURCE_DIR "${CMAKE_SOURCE_DIR}/h3/src/h3lib")
+set(H3_BINARY_DIR "${CMAKE_SOURCE_DIR}/h3/build/h3/lib")
+
+set(SRCS
+"${H3_SOURCE_DIR}/lib/algos.c"
+"${H3_SOURCE_DIR}/lib/coordijk.c"
+"${H3_SOURCE_DIR}/lib/bbox.c"
+"${H3_SOURCE_DIR}/lib/polygon.c"
+"${H3_SOURCE_DIR}/lib/h3Index.c"
+"${H3_SOURCE_DIR}/lib/vec2d.c"
+"${H3_SOURCE_DIR}/lib/vec3d.c"
+"${H3_SOURCE_DIR}/lib/vertex.c"
+"${H3_SOURCE_DIR}/lib/linkedGeo.c"
+"${H3_SOURCE_DIR}/lib/localij.c"
+"${H3_SOURCE_DIR}/lib/latLng.c"
+"${H3_SOURCE_DIR}/lib/directedEdge.c"
+"${H3_SOURCE_DIR}/lib/mathExtensions.c"
+"${H3_SOURCE_DIR}/lib/iterators.c"
+"${H3_SOURCE_DIR}/lib/vertexGraph.c"
+"${H3_SOURCE_DIR}/lib/faceijk.c"
+"${H3_SOURCE_DIR}/lib/baseCells.c"
+)
+
+configure_file("${H3_SOURCE_DIR}/include/h3api.h.in" "${H3_BINARY_DIR}/include/h3api.h")
+add_library(_h3 ${SRCS})
+target_include_directories(_h3 SYSTEM PUBLIC "${H3_SOURCE_DIR}/include")
+target_include_directories(_h3 SYSTEM PUBLIC "${H3_BINARY_DIR}/include")
+target_compile_definitions(_h3 PRIVATE H3_HAVE_VLA)
+
+
+
+
+
 # skip building extensions on mingw
 if(WIN32 AND NOT MSVC)
   return()
@@ -56,7 +89,7 @@ link_directories(${DUCKDB_LIBRARY_FOLDER})
 
 add_library(${TARGET_NAME} SHARED first_extensions.cpp)
 set_target_properties(${TARGET_NAME} PROPERTIES PREFIX "")
-target_link_libraries(${TARGET_NAME} Threads::Threads)
+target_link_libraries(${TARGET_NAME} _h3 Threads::Threads)
 
 if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
   target_link_libraries(${TARGET_NAME} -fsanitize=address)
