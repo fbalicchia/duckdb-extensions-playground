@@ -11,6 +11,7 @@ endif
 clean:
 	rm -rf build
 	rm -rf duckdb/build
+	rm -rf h3/build
 
 duckdb_debug:
 	cd duckdb && \

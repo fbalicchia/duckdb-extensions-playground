@@ -22,6 +22,8 @@ else()
   set(CMAKE_CXX_STANDARD 11)
 endif()
 
+add_compile_options(-fPIC)
+
 set(TARGET_NAME first_extensions)
 
 project(${TARGET_NAME} C CXX)
@@ -80,6 +82,10 @@ if(WIN32 AND NOT MSVC)
 endif()
 
 include_directories(${DUCKDB_INCLUDE_FOLDER})
+
+
+message("####check ")
+message (${CMAKE_BUILD_TYPE})
 
 if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
   add_compile_options(-Wall -pedantic -fsanitize=address -fno-sanitize=vptr)
