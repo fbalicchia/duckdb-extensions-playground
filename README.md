@@ -34,3 +34,25 @@ select hello('World from Italy');
 ```SQL
 select distance_in_km('8f2830828052d25', '8f283082a30e623');
 ```
+
+```SQL
+SELECT bigger_than_four(i) FROM (VALUES(3), (5)) tbl(i)
+```
+
+```SQL
+select h3_is_valid_cell('8f283082a30e623');
+```
+
+```SQL
+select h3_get_base_cell_number('8f283082a30e623');
+```
+
+```SQL
+select h3_cells_to_directed_edge('8f2830828052d25', '8f283082a30e623');
+```
+
+```SQL
+CREATE TABLE integers (i INTEGER);
+INSERT INTO integers VALUES (1), (2), (3), (999);
+SELECT udf_vectorized_int(i) FROM integers;
+```

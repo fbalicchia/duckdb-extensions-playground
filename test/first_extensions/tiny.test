@@ -1,0 +1,6 @@
+statement ok
+LOAD 'build/release/first_extensions.duckdb_extension';
+query I
+SELECT hello('World from Italy');
+----
+hello('World from Italy')

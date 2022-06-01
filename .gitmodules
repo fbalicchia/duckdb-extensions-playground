@@ -4,3 +4,6 @@
 [submodule "h3"]
 	path = h3
 	url = https://github.com/uber/h3.git
+[submodule "postgis"]
+	path = postgis
+	url = https://github.com/postgis/postgis.git
